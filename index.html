@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LinkLeaf — Bio Link Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --card: #1e1e1e;
+      --border: #2a2a2a;
+      --accent: #b9ff66;
+      --accent2: #66d9ff;
+      --text: #f0f0f0;
+      --muted: #888;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+    .logo {
+      font-family: var(--font-head);
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.3rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.85rem 2rem;
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .hero-cta:hover { transform: scale(1.03); }
+    .hero-cta svg { width: 18px; height: 18px; }
+
+    /* FEATURES */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      margin: 3rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .feature {
+      background: var(--bg);
+      padding: 2rem;
+    }
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .feature h3 {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .feature p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+
+    /* BUILDER SECTION */
+    #builder {
+      max-width: 1100px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      #builder { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    .panel-title {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    input[type="text"], input[type="url"], select, textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .link-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      align-items: center;
+    }
+    .link-row input { margin-bottom: 0; flex: 1; }
+    .link-row input:last-of-type { flex: 1.5; }
+    .remove-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, color 0.2s;
+    }
+    .remove-btn:hover { background: #2a0000; color: #ff6666; border-color: #ff4444; }
+
+    .add-link-btn {
+      background: none;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      width: 100%;
+      padding: 0.65rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .add-link-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .theme-btn {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    .theme-btn:hover { transform: scale(1.08); }
+    .theme-btn.active { border-color: var(--accent); }
+    .theme-btn span {
+      position: absolute;
+      bottom: 4px;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* PREVIEW PHONE */
+    .preview-wrap {
+      position: sticky;
+      top: 90px;
+    }
+    .phone-frame {
+      width: 280px;
+      margin: 0 auto;
+      background: #111;
+      border: 2px solid #333;
+      border-radius: 40px;
+      padding: 10px;
+      box-shadow: 0 0 80px rgba(185,255,102,0.08);
+    }
+    .phone-screen {
+      border-radius: 32px;
+      overflow: hidden;
+      height: 560px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .phone-screen::-webkit-scrollbar { display: none; }
+
+    #preview-inner {
+      min-height: 560px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: var(--font-body);
+      transition: background 0.4s;
+    }
+
+    #preview-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 0.75rem;
+      border: 3px solid rgba(255,255,255,0.15);
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+    #preview-name {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+    #preview-bio {
+      font-size: 0.75rem;
+      text-align: center;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+      opacity: 0.7;
+      padding: 0 0.5rem;
+    }
+    .preview-link {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      word-break: break-all;
+    }
+    .preview-link:hover { transform: scale(1.02); opacity: 0.9; }
+
+    .generate-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 1rem;
+      border-radius: 12px;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .generate-btn:hover { opacity: 0.88; transform: scale(1.01); }
+
+    /* OUTPUT MODAL */
+    #output-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    #output-modal.show { display: flex; }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-box h2 {
+      font-family: var(--font-head);
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .modal-box p { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.25rem; }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 0.72rem;
+      overflow-x: auto;
+      color: var(--accent2);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .modal-actions { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+    .btn-outline {
+      flex: 1;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      min-width: 120px;
+    }
+    .btn-outline:hover { background: var(--surface); }
+    .btn-primary {
+      flex: 1;
+      background: var(--accent);
+      border: none;
+      color: #000;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      min-width: 120px;
+    }
+
+    .steps-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-top: 1rem;
+    }
+    .steps-section h3 {
+      font-family: var(--font-head);
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .step {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      background: var(--accent);
+      color: #000;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step p { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+    .step p strong { color: var(--text); }
+    .step code {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      color: var(--accent2);
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Link<span>Leaf</span></div>
+  <button class="nav-cta" onclick="document.getElementById('builder').scrollIntoView({behavior:'smooth'})">Build yours →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✦ Free forever</div>
+  <h1>Your links.<br><em>One page.</em> Infinite reach.</h1>
+  <p>Build a beautiful bio link page in minutes. No account needed. Deploy for free on GitHub Pages.</p>
+  <button class="hero-cta" onclick="document.getElementById('builder').scrollIntoView({behavior:'smooth'})">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Start building
+  </button>
+</section>
+
+<div class="features">
+  <div class="feature">
+    <div class="feature-icon">⚡</div>
+    <h3>Instant preview</h3>
+    <p>See your page live as you type. No refresh needed.</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">🎨</div>
+    <h3>Beautiful themes</h3>
+    <p>Pick from 4 curated color themes that look great.</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">🚀</div>
+    <h3>GitHub Pages ready</h3>
+    <p>Download your file and deploy for free in minutes.</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">🔗</div>
+    <h3>Up to 5 links</h3>
+    <p>Add your Instagram, YouTube, website, and more.</p>
+  </div>
+</div>
+
+<!-- BUILDER -->
+<section id="builder">
+  <!-- LEFT: FORM -->
+  <div>
+    <div class="panel">
+      <div class="panel-title">Your Profile</div>
+
+      <label>Display Name</label>
+      <input type="text" id="inp-name" placeholder="e.g. Vishruth ✦" oninput="updatePreview()"/>
+
+      <label>Short Bio</label>
+      <textarea id="inp-bio" placeholder="Designer · Creator · Explorer" oninput="updatePreview()"></textarea>
+
+      <label>Profile Image URL <span style="color:#555;font-size:0.7rem;font-weight:400;text-transform:none">(optional — paste any image link)</span></label>
+      <input type="url" id="inp-avatar" placeholder="https://..." oninput="updatePreview()"/>
+    </div>
+
+    <div class="panel" style="margin-top:1rem">
+      <div class="panel-title">Your Links</div>
+      <div id="links-container"></div>
+      <button class="add-link-btn" onclick="addLink()">+ Add a link</button>
+    </div>
+
+    <div class="panel" style="margin-top:1rem">
+      <div class="panel-title">Theme</div>
+      <div class="theme-grid" id="theme-grid"></div>
+    </div>
+
+    <button class="generate-btn" onclick="generatePage()">⬇ Generate My Page</button>
+  </div>
+
+  <!-- RIGHT: PREVIEW -->
+  <div class="preview-wrap">
+    <p style="text-align:center;color:var(--muted);font-size:0.75rem;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.08em;">Live Preview</p>
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div id="preview-inner">
+          <div id="preview-avatar">🌿</div>
+          <div id="preview-name">Your Name</div>
+          <div id="preview-bio">Your bio goes here</div>
+          <div id="preview-links"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTPUT MODAL -->
+<div id="output-modal">
+  <div class="modal-box">
+    <h2>🎉 Your page is ready!</h2>
+    <p>Copy the HTML below, save it as <strong>index.html</strong>, and push it to GitHub to go live.</p>
+    <pre id="output-code"></pre>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="copyCode()">📋 Copy HTML</button>
+      <button class="btn-primary" onclick="downloadHTML()">⬇ Download index.html</button>
+      <button class="btn-outline" onclick="document.getElementById('output-modal').classList.remove('show')">✕ Close</button>
+    </div>
+    <div class="steps-section">
+      <h3>Deploy to GitHub Pages — 5 easy steps</h3>
+      <div class="step"><div class="step-num">1</div><p>Go to <strong>github.com</strong> and create a free account if you don't have one.</p></div>
+      <div class="step"><div class="step-num">2</div><p>Click <strong>New Repository</strong>. Name it <code>yourusername.github.io</code> (replace with your actual username).</p></div>
+      <div class="step"><div class="step-num">3</div><p>Upload your <code>index.html</code> file to the repo by dragging it in.</p></div>
+      <div class="step"><div class="step-num">4</div><p>Go to <strong>Settings → Pages</strong>. Under "Branch", select <code>main</code> and click Save.</p></div>
+      <div class="step"><div class="step-num">5</div><p>Your site is live at <strong>yourusername.github.io</strong> in ~1 minute! Share it everywhere 🚀</p></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Built with LinkLeaf · Free forever · Deploy on GitHub Pages
+</footer>
+
+<script>
+  const themes = [
+    { name: "Dark", bg: "#0d0d0d", card: "#1a1a1a", text: "#f0f0f0", accent: "#b9ff66", link: "#1e1e1e", linkText: "#f0f0f0", linkBorder: "1px solid #2a2a2a" },
+    { name: "Ocean", bg: "#0a1628", card: "#0f2040", text: "#e0f0ff", accent: "#66d9ff", link: "#0f2040", linkText: "#e0f0ff", linkBorder: "1px solid #1a3a60" },
+    { name: "Rose", bg: "#1a0a10", card: "#2a1020", text: "#ffe0ea", accent: "#ff80aa", link: "#2a1020", linkText: "#ffe0ea", linkBorder: "1px solid #3a1830" },
+    { name: "Sand", bg: "#f5f0e8", card: "#ede8e0", text: "#1a1410", accent: "#c45a1a", link: "#fff8f0", linkText: "#1a1410", linkBorder: "1px solid #d8cfc4" },
+  ];
+
+  let currentTheme = 0;
+  let links = [{ label: "", url: "" }, { label: "", url: "" }];
+
+  // Build theme grid
+  const tg = document.getElementById("theme-grid");
+  themes.forEach((t, i) => {
+    const b = document.createElement("button");
+    b.className = "theme-btn" + (i === 0 ? " active" : "");
+    b.style.background = t.bg;
+    b.style.border = `2px solid ${i === 0 ? "var(--accent)" : t.card}`;
+    b.innerHTML = `<span style="color:${t.accent}">${t.name}</span>`;
+    b.onclick = () => {
+      document.querySelectorAll(".theme-btn").forEach(x => { x.classList.remove("active"); x.style.borderColor = themes[parseInt(x.dataset.i)].card; });
+      b.classList.add("active");
+      b.style.borderColor = "var(--accent)";
+      currentTheme = i;
+      updatePreview();
+    };
+    b.dataset.i = i;
+    tg.appendChild(b);
+  });
+
+  function renderLinks() {
+    const c = document.getElementById("links-container");
+    c.innerHTML = "";
+    links.forEach((l, i) => {
+      const row = document.createElement("div");
+      row.className = "link-row";
+      row.innerHTML = `
+        <input type="text" placeholder="Label (e.g. Instagram)" value="${l.label}" oninput="links[${i}].label=this.value;updatePreview()"/>
+        <input type="url" placeholder="https://..." value="${l.url}" oninput="links[${i}].url=this.value;updatePreview()"/>
+        <button class="remove-btn" onclick="removeLink(${i})" title="Remove">✕</button>
+      `;
+      c.appendChild(row);
+    });
+  }
+
+  function addLink() {
+    if (links.length >= 5) { alert("Max 5 links for a clean page!"); return; }
+    links.push({ label: "", url: "" });
+    renderLinks();
+  }
+
+  function removeLink(i) {
+    links.splice(i, 1);
+    renderLinks();
+    updatePreview();
+  }
+
+  function updatePreview() {
+    const t = themes[currentTheme];
+    const name = document.getElementById("inp-name").value || "Your Name";
+    const bio = document.getElementById("inp-bio").value || "Your bio goes here";
+    const avatarUrl = document.getElementById("inp-avatar").value;
+
+    const inner = document.getElementById("preview-inner");
+    inner.style.background = t.bg;
+    inner.style.color = t.text;
+
+    const avatarEl = document.getElementById("preview-avatar");
+    if (avatarUrl) {
+      avatarEl.outerHTML = `<img id="preview-avatar" src="${avatarUrl}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:0.75rem;border:3px solid rgba(255,255,255,0.15);flex-shrink:0;"/>`;
+    } else {
+      const existing = document.getElementById("preview-avatar");
+      if (existing.tagName === "IMG") {
+        const div = document.createElement("div");
+        div.id = "preview-avatar";
+        div.style.cssText = "width:80px;height:80px;border-radius:50%;background:#333;margin-bottom:0.75rem;border:3px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;";
+        div.textContent = "🌿";
+        existing.replaceWith(div);
+      }
+    }
+
+    document.getElementById("preview-name").textContent = name;
+    document.getElementById("preview-name").style.color = t.text;
+
+    document.getElementById("preview-bio").textContent = bio;
+    document.getElementById("preview-bio").style.color = t.text;
+
+    const lc = document.getElementById("preview-links");
+    lc.innerHTML = "";
+    lc.style.width = "100%";
+    links.forEach(l => {
+      if (!l.label && !l.url) return;
+      const a = document.createElement("a");
+      a.className = "preview-link";
+      a.textContent = l.label || l.url || "Link";
+      a.style.background = t.link;
+      a.style.color = t.linkText;
+      a.style.border = t.linkBorder;
+      lc.appendChild(a);
+    });
+  }
+
+  function generatePage() {
+    const t = themes[currentTheme];
+    const name = document.getElementById("inp-name").value || "My Links";
+    const bio = document.getElementById("inp-bio").value || "";
+    const avatarUrl = document.getElementById("inp-avatar").value;
+
+    const linksHTML = links
+      .filter(l => l.label || l.url)
+      .map(l => `    <a class="link-btn" href="${l.url || '#'}" target="_blank" rel="noopener">${l.label || l.url}</a>`)
+      .join("\n");
+
+    const avatarHTML = avatarUrl
+      ? `<img src="${avatarUrl}" alt="${name}" class="avatar"/>`
+      : `<div class="avatar-emoji">🌿</div>`;
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${name}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:${t.bg};color:${t.text};font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
+    .container{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;text-align:center}
+    .avatar{width:90px;height:90px;border-radius:50%;object-fit:cover;margin-bottom:1rem;border:3px solid rgba(255,255,255,0.15)}
+    .avatar-emoji{font-size:3rem;margin-bottom:1rem}
+    h1{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:0.4rem;letter-spacing:-0.02em}
+    .bio{font-size:0.85rem;opacity:0.65;margin-bottom:1.5rem;line-height:1.6}
+    .link-btn{display:block;width:100%;padding:0.85rem 1rem;background:${t.link};color:${t.linkText};border:${t.linkBorder};border-radius:14px;text-decoration:none;font-size:0.9rem;font-weight:500;margin-bottom:0.65rem;transition:transform 0.15s,opacity 0.15s}
+    .link-btn:hover{transform:scale(1.02);opacity:0.88}
+    .footer{margin-top:2rem;font-size:0.7rem;opacity:0.3}
+    .footer a{color:inherit}
+  </style>
+</head>
+<body>
+  <div class="container">
+    ${avatarHTML}
+    <h1>${name}</h1>
+    <p class="bio">${bio}</p>
+${linksHTML}
+    <p class="footer">Made with <a href="#">LinkLeaf</a></p>
+  </div>
+</body>
+</html>`;
+
+    document.getElementById("output-code").textContent = html;
+    document.getElementById("output-modal").classList.add("show");
+    window._generatedHTML = html;
+    window._generatedName = name;
+  }
+
+  function copyCode() {
+    navigator.clipboard.writeText(window._generatedHTML || "");
+    alert("Copied to clipboard!");
+  }
+
+  function downloadHTML() {
+    const blob = new Blob([window._generatedHTML || ""], { type: "text/html" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "index.html";
+    a.click();
+  }
+
+  // Init
+  renderLinks();
+  updatePreview();
+</script>
+</body>
+</html>
